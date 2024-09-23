@@ -1,0 +1,5 @@
+# Taken from https://github.com/actions/javascript-action/blob/9acd878b075d695cbef9bbd4885a1e7276bd97bb/.gitattributes
+
+* text=auto eol=lf
+
+dist/** -diff linguist-generated=true

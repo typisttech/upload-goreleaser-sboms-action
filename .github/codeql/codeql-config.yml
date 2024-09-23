@@ -1,0 +1,6 @@
+# Take from https://github.com/actions/javascript-action/blob/9acd878b075d695cbef9bbd4885a1e7276bd97bb/.github/codeql/codeql-config.yml
+name: JavaScript CodeQL Configuration
+
+paths-ignore:
+  - node_modules
+  - dist
