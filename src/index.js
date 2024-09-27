@@ -1,20 +1,43 @@
 import { readFileSync } from 'fs';
-import { getInput, setOutput, setFailed } from '@actions/core';
+import { debug, getInput, setOutput, setFailed, startGroup, endGroup } from '@actions/core';
 import { DefaultArtifactClient } from '@actions/artifact';
+
+function getIntInput(key) {
+  const inputStr = getInput(key)
+  if (!inputStr) {
+    setFailed(`Invalid ${key}: Blank value`)
+  }
+  const inputInt = parseInt(inputStr)
+  if (isNaN(inputInt)) {
+    setFailed(`Invalid ${key}: Not a number`)
+  }
+  return inputInt
+}
 
 async function run() {
   try {
+    startGroup('Do some function')
+    const name = getInput('name');
+    debug(`Name: ${name}`);
     const dist = getInput('dist');
+    debug(`Dist: ${dist}`);
     const sbomSuffix = getInput('sbom-suffix');
-    const artifactName = getInput('artifact');
-    const retentionDays = getInput('retention-days');
-    const compressionLevel = getInput('compression-level');
+    debug(`SBOM Suffix: ${sbomSuffix}`);
+    const retentionDays = getIntInput('retention-days');
+    debug(`Retention Days: ${retentionDays}`);
+    const compressionLevel = getIntInput('compression-level');
+    debug(`Compression Level: ${compressionLevel}`);
+    endGroup()
 
+    debug(`Parsing ${dist}/artifacts.json`)
     const artifacts = JSON.parse(
       readFileSync(`${dist}/artifacts.json`)
     )
 
     const sboms = artifacts.filter((artifact) => artifact.type === 'SBOM');
+    if (sboms.length === 0) {
+      setFailed('No SBOMs found');
+    }
 
     const attestations = sboms.reduce((acc, sbom) => {
       acc.push({
@@ -23,7 +46,7 @@ async function run() {
       });
       return acc;
     }, []);
-    setOutput("attestations", attestations);
+    setOutput('attestations', attestations);
 
     const uploadPaths = attestations.reduce((acc, current) => {
       acc.push(current.subject);
@@ -32,11 +55,11 @@ async function run() {
     }, []);
 
     const artifactClient = new DefaultArtifactClient()
-    const {id: artifactId} = await artifactClient.uploadArtifact(artifactName, uploadPaths, '.', {
+    const {id: artifactId} = await artifactClient.uploadArtifact(name, uploadPaths, '.', {
       retentionDays,
       compressionLevel,
     });
-    setOutput("artifact-id", artifactId);
+    setOutput('artifact-id', artifactId);
   } catch (error) {
     setFailed(error.message);
   }
