@@ -34,14 +34,15 @@
     # Name of the artifact to upload.
     # Required. Default is 'sboms'
     name:
+
     # Path to the dist folder which containing artifacts.json
     # Required. Default is 'dist'
     dist:
+
     # The SBOM suffix.
     #
     # This action expects the SBOM is named after its subject with a suffix under the same directory.
-    # 
-    # See [Known Issues](https://github.com/typisttech/upload-goreleaser-sboms-action?tab=readme-ov-file#known-issues)
+    # See [known issues](https://github.com/typisttech/upload-goreleaser-sboms-action?tab=readme-ov-file#known-issues)
     # 
     # Required. Default is '.sbom.json'
     sbom-suffix:
@@ -93,6 +94,8 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # This action!
       - uses: typisttech/upload-goreleaser-sboms-action@v0
         id: upload-sbom
 
@@ -156,6 +159,8 @@ jobs:
             dist/my-cmd_*/my-cmd
             dist/my-cmd_*.tar.gz
             dist/**/*.sbom.json
+
+      # This action!
       - uses: typisttech/upload-goreleaser-sboms-action@v0
         id: upload-sbom
         with:
