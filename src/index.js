@@ -1,22 +1,24 @@
 import { readFileSync } from 'fs';
-import { debug, getInput, setOutput, setFailed, startGroup, endGroup } from '@actions/core';
+import { exit } from 'process';
+import { debug, getInput, setOutput, setFailed } from '@actions/core';
 import { DefaultArtifactClient } from '@actions/artifact';
 
 function getIntInput(key) {
   const inputStr = getInput(key)
   if (!inputStr) {
     setFailed(`Invalid ${key}: Blank value`)
+    exit()
   }
   const inputInt = parseInt(inputStr)
   if (isNaN(inputInt)) {
     setFailed(`Invalid ${key}: Not a number`)
+    exit()
   }
   return inputInt
 }
 
 async function run() {
   try {
-    startGroup('Do some function')
     const name = getInput('name');
     debug(`Name: ${name}`);
     const dist = getInput('dist');
@@ -27,7 +29,6 @@ async function run() {
     debug(`Retention Days: ${retentionDays}`);
     const compressionLevel = getIntInput('compression-level');
     debug(`Compression Level: ${compressionLevel}`);
-    endGroup()
 
     debug(`Parsing ${dist}/artifacts.json`)
     const artifacts = JSON.parse(
