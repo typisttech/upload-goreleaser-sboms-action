@@ -7,18 +7,18 @@ branding:
   color: 'black'
 
 inputs:
+  name:
+    description: 'Name of the artifact to upload.'
+    required: true
+    default: 'sboms'
   dist:
     description: 'Path to the dist folder which containing artifacts.json'
     required: true
     default: 'dist'
   sbom-suffix:
-    description: 'SBOM suffix'
+    description: 'SBOM suffix.'
     required: true
     default: '.sbom.json'
-  artifact:
-    description: 'Artifact name'
-    required: true
-    default: 'sboms'
   retention-days:
     description: >
       Duration after which artifact will expire in days. 0 means using default retention.
